@@ -1,5 +1,7 @@
 # _*_ coding: utf-8 _*_
 
+from __future__ import unicode_literals
+
 import logging
 import GetData_zhihu
 
@@ -24,6 +26,7 @@ bootstrap = Bootstrap(app=app)
 zhihu_all_topics = GetData_zhihu.get_all_topics()
 zhihu_all_topics_key = {}
 zhihu_init_topics = GetData_zhihu.get_topic_data(topic_id="19559424", topic_name="数据分析")
+zhihu_topic_datas = {}
 
 
 # form class
@@ -80,10 +83,15 @@ def zhihu_get_topics_list():
 
 @app.route("/zhihu_get_topics_data/", methods=["post"])
 def zhihu_get_topics_data():
-    if request.form["id"] == "19554449":
-        result = zhihu_init_topics
+    tid, tname = request.form["id"], request.form["name"]
+    if zhihu_topic_datas.has_key(tid):
+        result = zhihu_topic_datas[tid]
     else:
-        result = GetData_zhihu.get_topic_data(request.form["id"], request.form["name"])
+        if request.form["id"] == "19554449":
+            result = zhihu_init_topics
+        else:
+            result = GetData_zhihu.get_topic_data(request.form["id"], request.form["name"])
+            zhihu_topic_datas[tid] = result
     return jsonify(result)
 
 
